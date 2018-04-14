@@ -6,6 +6,7 @@ import Contact from './containers/Contact';
 import NotFound from './components/NotFound';
 import Login from './containers/Account/Login';
 import Signup from './containers/Account/Signup';
+import Questionnaire from './containers/Questionnaire';
 
 export default function getRoutes(store) {
   const ensureAuthenticated = (nextState, replace) => {
@@ -26,6 +27,7 @@ export default function getRoutes(store) {
   return (
     <Route path="/" component={App}>
       <IndexRoute component={Home} onLeave={clearMessages}/>
+      <Route path="/management" component={Questionnaire} onLeave={clearMessages}/>
       <Route path="/contact" component={Contact} onLeave={clearMessages}/>
       <Route path="/login" component={Login} onEnter={skipIfAuthenticated} onLeave={clearMessages}/>
       <Route path="/signup" component={Signup} onEnter={skipIfAuthenticated} onLeave={clearMessages}/>
