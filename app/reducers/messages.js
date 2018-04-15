@@ -3,12 +3,17 @@ export default function messages(state = {}, action) {
     case 'LOGIN_FAILURE':
     case 'SIGNUP_FAILURE':
     case 'CONTACT_FORM_FAILURE':
+    case 'QUESTIONNAIRE_ADD_FAILURE':
     case 'UNLINK_FAILURE':
     case 'LINK_FAILURE':
       return {
         error: action.messages
       };
     case 'CONTACT_FORM_SUCCESS':
+      return {
+        success: action.messages
+      };
+    case 'QUESTIONNAIRE_ADD_SUCCESS':
       return {
         success: action.messages
       };

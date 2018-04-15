@@ -1,11 +1,14 @@
-export function submitContactForm(name, email, message) {
+export function submitContactForm(name, email, message, token) {
   return (dispatch) => {
     dispatch({
       type: 'CLEAR_MESSAGES'
     });
     return fetch('/contact', {
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         name: name,
         email: email,

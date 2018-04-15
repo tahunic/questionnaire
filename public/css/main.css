@@ -5976,3 +5976,6 @@ textarea {
 
 .question-add {
   margin-bottom: 50px; }
+
+.questionnaire-card {
+  max-height: 100px; }

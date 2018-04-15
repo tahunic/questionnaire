@@ -25,12 +25,17 @@ require('babel-core/register');
 require('babel-polyfill');
 
 // Models
-var User = require('./models/User');
+var Answer = require('./models/Answer');
+var Question = require('./models/Question');
 var Questionnaire = require('./models/Questionnaire');
+var QuestionType = require('./models/QuestionType');
+var User = require('./models/User');
 
 // Controllers
-var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
+var questionnaireController = require('./controllers/questionnaire');
+var questionTypeController = require('./controllers/questionType');
+var userController = require('./controllers/user');
 
 // React and Server-Side Rendering
 var routes = require('./app/routes');
@@ -82,9 +87,11 @@ if (app.get('env') === 'development') {
   app.use(require('webpack-hot-middleware')(compiler));
 }
 
-app.post('/contact', contactController.contactPost);
-app.put('/account', userController.ensureAuthenticated, userController.accountPut);
-app.delete('/account', userController.ensureAuthenticated, userController.accountDelete);
+app.post('/contact', userController.ensureAuthenticated, contactController.contactPost);
+app.post('/questionnaire', userController.ensureAuthenticated, questionnaireController.questionnairePost);
+app.get('/questionnaire', userController.ensureAuthenticated, questionnaireController.questionnaireGet);
+app.get('/questionnaire/:id', userController.ensureAuthenticated, questionnaireController.questionnaireGetById);
+app.get('/questiontype', questionTypeController.questionTypeGet);
 app.post('/signup', userController.signupPost);
 app.post('/login', userController.loginPost);
 app.get('/unlink/:provider', userController.ensureAuthenticated, userController.unlink);

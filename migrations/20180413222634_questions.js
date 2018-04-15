@@ -5,6 +5,7 @@ exports.up = function(knex, Promise) {
         table.text('title');
         table.integer('questionnaireId').references('questionnaires.id');
         table.integer('questionTypeId').references('questionTypes.id');
+        table.timestamps();        
       })
     ]);
   };

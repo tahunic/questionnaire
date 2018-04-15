@@ -1,12 +1,14 @@
 import React from 'react';
 import { IndexRoute, Route } from 'react-router';
 import App from './components/App';
-import Home from './containers/Home';
-import Contact from './containers/Contact';
+import Home from './components/Home';
+import Contact from './components/Contact';
 import NotFound from './components/NotFound';
-import Login from './containers/Account/Login';
-import Signup from './containers/Account/Signup';
-import Questionnaire from './containers/Questionnaire';
+import Login from './components/Account/Login';
+import Signup from './components/Account/Signup';
+import QuestionnaireAdd from './components/Questionnaire-add';
+import QuestionnaireList from './components/Questionnaire-list';
+import QuestionnaireIndex from './components/Questionnaire-index';
 
 export default function getRoutes(store) {
   const ensureAuthenticated = (nextState, replace) => {
@@ -26,8 +28,10 @@ export default function getRoutes(store) {
   };
   return (
     <Route path="/" component={App}>
-      <IndexRoute component={Home} onLeave={clearMessages}/>
-      <Route path="/management" component={Questionnaire} onLeave={clearMessages}/>
+      <IndexRoute component={QuestionnaireList} onLeave={clearMessages}/>
+      <Route path="/management" component={QuestionnaireList} onLeave={clearMessages}/>
+      <Route path="/questionnaire-add" component={QuestionnaireAdd} onLeave={clearMessages}/>
+      <Route path="/questionnaires/:id" component={QuestionnaireList} onLeave={clearMessages}/>
       <Route path="/contact" component={Contact} onLeave={clearMessages}/>
       <Route path="/login" component={Login} onEnter={skipIfAuthenticated} onLeave={clearMessages}/>
       <Route path="/signup" component={Signup} onEnter={skipIfAuthenticated} onLeave={clearMessages}/>

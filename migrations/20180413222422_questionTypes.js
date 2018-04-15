@@ -3,6 +3,7 @@ exports.up = function(knex, Promise) {
       knex.schema.createTable('questionTypes', function(table) {
         table.increments()
         table.string('name');
+        table.timestamps();        
       })
     ]);
   };
