@@ -7,7 +7,9 @@ var knex = require('knex')(config);
  * GET /questionnaries
  */
 exports.questionnaireGet = function (req, res) {
-  Questionnaire.collection().fetch()
+  Questionnaire.collection().fetch({
+    columns: ['id', 'title', 'description']
+  })
     .then((response) => {
       res.send(response);
     })
@@ -21,7 +23,7 @@ exports.questionnaireGet = function (req, res) {
  * GET /questionnaries/5
  */
 exports.questionnaireGetById = function (req, res) {
-  Questionnaire.collection().forge({id: req.params.id})
+  Questionnaire.where({id: req.params.id })
   .fetch({withRelated: ['questions', 'questions.answers']})
     .then((response) => {
       res.send(response);

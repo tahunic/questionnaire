@@ -1,12 +1,17 @@
 var QuestionType = require('../models/QuestionType');
 
 /**
- * GET /contact
+ * GET /questiontype
  */
 exports.questionTypeGet = function (req, res) {
-  
-    new QuestionType().fetchAll()
-        .then((response) => {
-            console.log(response);
-        });
+    QuestionType.collection().fetch({
+        columns: ['id', 'name']
+    })
+    .then((response) => {
+        res.send(response);
+    })
+    .catch(function(err) {
+        console.log(err);
+        return res.status(500);
+    });
 };

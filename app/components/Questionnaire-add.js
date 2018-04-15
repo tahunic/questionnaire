@@ -13,8 +13,9 @@ class QuestionnaireAdd extends Component {
     }
 
     componentWillMount() {
-        const types = [{ id: 1, name: 'Text' }, { id: 2, name: 'Yes/No' }, { id: 3, name: 'Single choice' }, { id: 4, name: 'Multiple choice' },]
-        this.setState({ types });
+        // const types = [{ id: 1, name: 'Text' }, { id: 2, name: 'Yes/No' }, { id: 3, name: 'Single choice' }, { id: 4, name: 'Multiple choice' },]
+        // this.setState({ types });
+        this.props.fetchQuestionTypes();
     }
 
     handleChange(event) {
@@ -25,7 +26,7 @@ class QuestionnaireAdd extends Component {
         event.preventDefault();
         this.filterAnswers();
         this.props.dispatch(submitQuestionnaireAddForm(this.state.title, this.state.description, this.state.questions, this.props.token));
-        this.setState({ title: initialState.title, description: initialState.description, questions: initialState.questions });        
+        this.setState({ title: initialState.title, description: initialState.description, questions: initialState.questions });
     }
 
     onQuestionAdded() {
@@ -108,7 +109,7 @@ class QuestionnaireAdd extends Component {
                     <label htmlFor="newQuestion" className="col-sm-2">Question type</label>
                     <div className="col-sm-8">
                         <select name={question.id} id={question.id} className="form-control" value={question.questionTypeId} onChange={(e) => this.onQuestionTypeChange(e)}>
-                            {this.state.types.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                            {this.props.questionTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                         </select>
                     </div>
                 </div>
@@ -204,8 +205,9 @@ class QuestionnaireAdd extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth.token,
-        messages: state.messages
+        messages: state.messages,
+        questionTypes: state.questionnaires.questionTypes
     };
 };
 
-export default connect(mapStateToProps)(QuestionnaireAdd);
+export default connect(mapStateToProps, { fetchQuestionTypes })(QuestionnaireAdd);

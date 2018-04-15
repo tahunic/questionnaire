@@ -26,7 +26,7 @@ class QuestionnaireList extends Component {
                         <div className="panel-body">
                             <h3>{q.title}</h3>
                             <p>{q.description}</p>
-                            <Link to={'/questionnaries/' + q.id } className="btn btn-default">View details</Link>
+                            <Link to={'/questionnaires/' + q.id } className="btn btn-default">View details</Link>
                             <a href="#" role="button" className="btn btn-default">Edit</a>
                         </div>
                     </div>

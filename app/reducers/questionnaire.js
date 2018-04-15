@@ -1,6 +1,7 @@
 const initialState = {
     all: null,
-    questionnaire: null
+    questionnaire: null,
+    questionTypes: []
 };
 
 export default function questionnaire(state = initialState, action) {
@@ -9,6 +10,8 @@ export default function questionnaire(state = initialState, action) {
             return { all: action.payload };
         case 'QUESTIONNAIRE_SUCCESS':
             return { questionnaire: action.payload };
+        case 'QUESTION_TYPES_SUCCESS':
+            return { questionTypes: action.payload };
         default:
             return state;
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { submitQuestionnaireAddForm, fetchQuestionTypes } from '../actions/questionnaire';
+import { fetchQuestionnaire, fetchQuestionTypes } from '../actions/questionnaire';
 import Messages from '../components/Messages';
 
 const initialState = { title: '', description: '', questions: [], types: [] };
@@ -14,8 +14,9 @@ class Questionnaire extends Component {
 
     componentWillMount() {
         const types = [{ id: 1, name: 'Text' }, { id: 2, name: 'Yes/No' }, { id: 3, name: 'Single choice' }, { id: 4, name: 'Multiple choice' }]
-        
-        this.setState({ types });
+
+        this.props.fetchQuestionnaire(this.props.params.id, this.props.token).then((res) => console.log(res));
+        this.props.fetchQuestionTypes();
     }
 
     handleChange(event) {
@@ -26,7 +27,7 @@ class Questionnaire extends Component {
         event.preventDefault();
         this.filterAnswers();
         this.props.dispatch(submitQuestionnaireAddForm(this.state.title, this.state.description, this.state.questions, this.props.token));
-        this.setState({ title: initialState.title, description: initialState.description, questions: initialState.questions });        
+        this.setState({ title: initialState.title, description: initialState.description, questions: initialState.questions });
     }
 
     onQuestionAdded() {
@@ -156,45 +157,70 @@ class Questionnaire extends Component {
         );
     }
 
+    renderQuestion(question) {
+
+        return (
+            <div key={question.id}>
+                <div className="form-group">
+                    <label htmlFor="true" className="col-sm-10">{question.title}</label>
+                </div>
+                <div className="form-group">
+                    <div className="col-sm-10">
+                        <label htmlFor="true" className="col-sm-2">Answer {i + 1}</label>
+                        <input type="radio" className="form-control" /> {question.answers[0].title}
+                        <input type="radio" className="form-control" /> {question.answers[1].title}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    renderAnswers(question) {
+        console.log(question);
+        return question.answers.map((answer) => {
+            return (
+                <div key={answer.id} className="form-group">
+                    <div className="col-sm-10">
+                        <label htmlFor="true" className="col-sm-8 col-xs-8">{answer.title}</label>
+                        <input type="radio" className="col-sm-2 col-xs-2" />
+                    </div>
+                </div>
+            );
+        });
+    }
+
+    renderQuestions() {
+
+        return this.props.questionnaire.questions.map((question) => {
+            return (
+                <div key={question.id}>
+                    <div className="form-group">
+                        <label htmlFor="true" className="col-sm-10">{question.title}</label>
+                    </div>
+
+                    {this.renderAnswers(question)}
+                </div>
+            );
+        });
+    }
+
     render() {
+        const { questionnaire } = this.props;
+        if (!questionnaire) {
+            return <div>Loading...</div>
+        }
         return (
             <div className="container">
                 <div className="panel">
                     <div className="panel-heading">
-                        <h3 className="panel-title">New Questionnaire</h3>
+                        <h3 className="panel-title">{questionnaire.title}</h3>
+                    </div>
+
+                    <div className="panel-heading">
+                        <h3 className="panel-title">{questionnaire.description}</h3>
                     </div>
                     <div className="panel-body">
-                        <Messages messages={this.props.messages} />
-                        <form onSubmit={(e) => this.handleSubmit(e)} className="form-horizontal">
-                            <div className="form-group">
-                                <label htmlFor="title" className="col-sm-2">Questionnaire Title</label>
-                                <div className="col-sm-8">
-                                    <input type="text" name="title" id="title" className="form-control" value={this.state.title} onChange={(e) => this.handleChange(e)} autoFocus />
-                                </div>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="description" className="col-sm-2">Questionnaire description</label>
-                                <div className="col-sm-8">
-                                    <textarea name="description" id="description" rows="5" className="form-control" value={this.state.description} onChange={(e) => this.handleChange(e)} />
-                                </div>
-                            </div>
-                            <br /><br />
-
-                            {this.state.questions.map((currElement, index) => this.renderQuestion(index))}
-
-                            <div className="form-group">
-                                <label htmlFor="newQuestion" className="col-sm-2"></label>
-                                <div className="col-sm-8">
-                                    <button type="button" className="btn btn-primary" onClick={() => this.onQuestionAdded()}>Add new question</button>
-                                </div>
-                            </div>
-                            <hr />
-                            <div className="form-group">
-                                <div className="col-sm-offset-2 col-sm-8">
-                                    <button type="submit" className="btn btn-success">Save</button>
-                                </div>
-                            </div>
-                        </form>
+                        {this.renderQuestions()}
                     </div>
                 </div>
             </div>
@@ -205,8 +231,10 @@ class Questionnaire extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth.token,
+        questionnaire: state.questionnaires.questionnaire,
+        questionTypes: state.questionnaires.questionTypes,
         messages: state.messages
     };
 };
 
-export default connect(mapStateToProps)(Questionnaire);
+export default connect(mapStateToProps, { fetchQuestionnaire, fetchQuestionTypes })(Questionnaire);

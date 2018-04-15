@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-fetch';
+
 export function submitQuestionnaireAddForm(title, description, questions, token) {
   return (dispatch) => {
     dispatch({
@@ -44,14 +46,7 @@ export function fetchQuestionTypes() {
         return response.json().then((json) => {
           dispatch({
             type: 'QUESTION_TYPES_SUCCESS',
-            messages: json
-          });
-        });
-      } else {
-        return response.json().then((json) => {
-          dispatch({
-            type: 'QUESTION_TYPES_FAILURE',
-            messages: json
+            payload: json
           });
         });
       }
@@ -108,7 +103,7 @@ export function fetchQuestionnaire(id, token) {
               type: 'QUESTIONNAIRE_SUCCESS',
               payload: json
             });
-            console.log("Resoinse", json)
+            console.log("response get by id", json)
           });
         }
       });
