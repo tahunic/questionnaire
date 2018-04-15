@@ -21,7 +21,7 @@ class QuestionnaireList extends Component {
     renderQuestionnaires() {
         return this.props.questionnaires.all.map((q) => {
             return (
-                <div className="col-sm-4" key={q.id}>
+                <div className="col-sm-4 col-xs-12" key={q.id}>
                     <div className="panel">
                         <div className="panel-body">
                             <h3>{q.title}</h3>

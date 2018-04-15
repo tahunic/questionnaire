@@ -36,6 +36,34 @@ export function submitQuestionnaireAddForm(title, description, questions, token)
   };
 }
 
+export function submitQuestionnaireFillForm(questions, userId, token) {
+  return (dispatch) => {
+    dispatch({
+      type: 'CLEAR_MESSAGES'
+    });
+    return fetch('/questionnaire/fill', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        questions: questions,
+        userId: userId
+      })
+    }).then((response) => {
+      if (response.ok) {
+        return response.json().then((json) => {
+          dispatch({
+            type: 'QUESTIONNAIRE_FILL_SUCCESS',
+            messages: json
+          });
+        });
+      }
+    })
+  };
+}
+
 export function fetchQuestionTypes() {
   return (dispatch) => {
     dispatch({
@@ -73,7 +101,6 @@ export function fetchQuestionnaires(token) {
               type: 'QUESTIONNAIRES_SUCCESS',
               payload: json
             });
-            console.log("Resoinse", json)
           });
         }
       });
@@ -103,7 +130,6 @@ export function fetchQuestionnaire(id, token) {
               type: 'QUESTIONNAIRE_SUCCESS',
               payload: json
             });
-            console.log("response get by id", json)
           });
         }
       });
@@ -113,3 +139,4 @@ export function fetchQuestionnaire(id, token) {
     }
   }
 }
+

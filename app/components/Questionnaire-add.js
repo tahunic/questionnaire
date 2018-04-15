@@ -13,8 +13,6 @@ class QuestionnaireAdd extends Component {
     }
 
     componentWillMount() {
-        // const types = [{ id: 1, name: 'Text' }, { id: 2, name: 'Yes/No' }, { id: 3, name: 'Single choice' }, { id: 4, name: 'Multiple choice' },]
-        // this.setState({ types });
         this.props.fetchQuestionTypes();
     }
 
@@ -25,7 +23,7 @@ class QuestionnaireAdd extends Component {
     handleSubmit(event) {
         event.preventDefault();
         this.filterAnswers();
-        this.props.dispatch(submitQuestionnaireAddForm(this.state.title, this.state.description, this.state.questions, this.props.token));
+        this.props.submitQuestionnaireAddForm(this.state.title, this.state.description, this.state.questions, this.props.token);
         this.setState({ title: initialState.title, description: initialState.description, questions: initialState.questions });
     }
 
@@ -210,4 +208,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, { fetchQuestionTypes })(QuestionnaireAdd);
+export default connect(mapStateToProps, { fetchQuestionTypes, submitQuestionnaireAddForm })(QuestionnaireAdd);

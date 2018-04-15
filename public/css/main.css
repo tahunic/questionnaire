@@ -5979,3 +5979,6 @@ textarea {
 
 .questionnaire-card {
   max-height: 100px; }
+
+.answer-input {
+  margin-bottom: 50px; }
