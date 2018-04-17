@@ -141,7 +141,6 @@ export function fetchQuestionnaires(token, user) {
     }).then((response) => {
       if (response.ok) {
         return response.json().then((json) => {
-          console.log("fetchQuestionnaires",json);
           // Check if user has already submitted questionnaire and mark it
           json = Array.isArray(json) ? json : [json]
           json.map((questionnaire) => {

@@ -1,4 +1,5 @@
 var bookshelf = require('../config/bookshelf');
+var answerUser = require('../models/AnswerUser');
 
 var Answer = bookshelf.Model.extend({
   tableName: 'answers',
@@ -6,7 +7,7 @@ var Answer = bookshelf.Model.extend({
   answersUsers: function () {
     // var answerUser = bookshelf.model('AnswerUser'); 
 
-    return this.hasMany(require('./answerUser'), 'answerId');
+    return this.hasMany(answerUser, 'answerId');
   }
 }, {
     dependents: ['answersUsers']

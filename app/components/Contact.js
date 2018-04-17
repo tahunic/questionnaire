@@ -10,7 +10,6 @@ class Contact extends Component {
   }
 
   handleChange(event) {
-    console.log(this.props.token);    
     this.setState({ [event.target.name]: event.target.value });
   }
 
