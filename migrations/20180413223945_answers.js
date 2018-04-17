@@ -3,8 +3,7 @@ exports.up = function(knex, Promise) {
       knex.schema.createTable('answers', function(table) {
         table.increments()
         table.text('title');
-        table.integer('votes');
-        table.integer('questionId').references('questions.id');
+        table.integer('questionId').references('questions.id').onDelete('CASCADE');
         table.timestamps();
       })
     ]);

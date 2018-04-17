@@ -11,6 +11,8 @@ var Question = bookshelf.Model.extend({
   answers: function() {
     return this.hasMany(answer, 'questionId');
   }
+}, {
+  dependents: ['answers']
 });
 
 module.exports = Question;

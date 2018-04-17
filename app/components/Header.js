@@ -11,11 +11,14 @@ class Header extends Component {
 
   render() {
     const active = { borderBottomColor: '#3f51b5' };
+    const management = this.props.user ? (
+      this.props.user.isAdmin ? <li><Link to="/management" activeStyle={active}>Management</Link></li> : <div></div>
+    ) : null;
     const rightNav = this.props.token ? (
       <ul className="nav navbar-nav navbar-right">
         <li className="dropdown">
           <a href="#" data-toggle="dropdown" className="navbar-avatar dropdown-toggle">
-            <img src={this.props.user.picture || this.props.user.gravatar}/>
+            <img src={this.props.user.picture || this.props.user.gravatar} />
             {' '}{this.props.user.name || this.props.user.email || this.props.user.id}{' '}
             <i className="caret"></i>
           </a>
@@ -25,11 +28,11 @@ class Header extends Component {
         </li>
       </ul>
     ) : (
-      <ul className="nav navbar-nav navbar-right">
-        <li><Link to="/login" activeStyle={active}>Log in</Link></li>
-        <li><Link to="/signup" activeStyle={active}>Sign up</Link></li>
-      </ul>
-    );
+        <ul className="nav navbar-nav navbar-right">
+          <li><Link to="/login" activeStyle={active}>Log in</Link></li>
+          <li><Link to="/signup" activeStyle={active}>Sign up</Link></li>
+        </ul>
+      );
     return (
       <nav className="navbar navbar-default navbar-static-top">
         <div className="container">
@@ -40,12 +43,12 @@ class Header extends Component {
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>
-            <IndexLink to="/" className="navbar-brand">Questionnaire</IndexLink>
+            <IndexLink to="/" className="navbar-brand">MOP Questionnaire</IndexLink>
           </div>
           <div id="navbar" className="navbar-collapse collapse">
             <ul className="nav navbar-nav">
               <li><IndexLink to="/" activeStyle={active}>Home</IndexLink></li>
-              <li><Link to="/management" activeStyle={active}>Management</Link></li>
+              {management}
             </ul>
             {rightNav}
           </div>

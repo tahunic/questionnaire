@@ -6,9 +6,10 @@ import Contact from './components/Contact';
 import NotFound from './components/NotFound';
 import Login from './components/Account/Login';
 import Signup from './components/Account/Signup';
-import QuestionnaireAdd from './components/Questionnaire-add';
-import QuestionnaireList from './components/Questionnaire-list';
-import QuestionnaireIndex from './components/Questionnaire-index';
+import QuestionnaireAdd from './components/Questionnaire/QuestionnaireAdd';
+import QuestionnaireList from './components/Questionnaire//QuestionnaireList';
+import QuestionnaireIndex from './components/Questionnaire//QuestionnaireIndex';
+import QuestionnaireManage from './components/Questionnaire//QuestionnaireManage';
 
 export default function getRoutes(store) {
   const ensureAuthenticated = (nextState, replace) => {
@@ -21,6 +22,16 @@ export default function getRoutes(store) {
       replace('/');
     }
   };
+  const loginIfNotAuthenticated = (nextState, replace) => {
+    if (!store.getState().auth.token) {
+      replace('/login');
+    }
+  };
+  const redirectIfNotAuthorized = (nextState, replace) => {
+    if (store.getState().auth.user.isAdmin !== true) {
+      replace('/not-found');
+    }
+  };
   const clearMessages = () => {
     store.dispatch({
       type: 'CLEAR_MESSAGES'
@@ -28,13 +39,14 @@ export default function getRoutes(store) {
   };
   return (
     <Route path="/" component={App}>
-      <IndexRoute component={QuestionnaireList} onLeave={clearMessages}/>
-      <Route path="/management" component={QuestionnaireList} onLeave={clearMessages}/>
-      <Route path="/questionnaire-add" component={QuestionnaireAdd} onLeave={clearMessages}/>
+      <IndexRoute component={QuestionnaireList} onEnter={loginIfNotAuthenticated} onLeave={clearMessages}/>
+      <Route path="/management" component={QuestionnaireAdd} onLeave={clearMessages}/>
       <Route path="/questionnaires/:id" component={QuestionnaireIndex} onLeave={clearMessages}/>
+      <Route path="/questionnaires/:id/manage" component={QuestionnaireManage} onLeave={clearMessages}/>
       <Route path="/contact" component={Contact} onLeave={clearMessages}/>
       <Route path="/login" component={Login} onEnter={skipIfAuthenticated} onLeave={clearMessages}/>
       <Route path="/signup" component={Signup} onEnter={skipIfAuthenticated} onLeave={clearMessages}/>
+      <Route path="/not-found" component={NotFound} onLeave={clearMessages}/>
       <Route path="*" component={NotFound} onLeave={clearMessages}/>
     </Route>
   );

@@ -1,16 +1,12 @@
 var bookshelf = require('../config/bookshelf');
 var user = require('./User');
-var questionnaire = require('./Questionnaire');
 
-var QuestionType = bookshelf.Model.extend({
+var QuestionnaireUser = bookshelf.Model.extend({
   tableName: 'questionnairesUsers',
   hasTimestamps: true,
-  user: function() {
+  users: function() {
     return this.belongsTo(user);
-  },
-  questionnaire: function() {
-      return this.belongsTo(questionnaire)
   }
 });
 
-module.exports = QuestionType;
+module.exports = QuestionnaireUser;

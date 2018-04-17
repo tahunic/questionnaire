@@ -4,7 +4,6 @@ exports.up = function(knex, Promise) {
       table.increments();
       table.string('firstName');
       table.string('lastName');
-      table.string('name');
       table.boolean('isAdmin');
       table.string('email').unique();
       table.string('password');

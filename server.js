@@ -91,7 +91,10 @@ app.post('/contact', userController.ensureAuthenticated, contactController.conta
 app.post('/questionnaire', userController.ensureAuthenticated, questionnaireController.questionnairePost);
 app.post('/questionnaire/fill', userController.ensureAuthenticated, questionnaireController.questionnaireFillPost);
 app.get('/questionnaire', userController.ensureAuthenticated, questionnaireController.questionnaireGet);
+app.get('/questionnaire/admin', userController.ensureAuthenticated, questionnaireController.questionnaireAdminGet);
 app.get('/questionnaire/:id', userController.ensureAuthenticated, questionnaireController.questionnaireGetById);
+app.get('/questionnaire/:id/manage', userController.ensureAuthenticated, questionnaireController.questionnaireGetByIdAdmin);
+app.delete('/questionnaire/:id', userController.ensureAuthenticated, questionnaireController.questionnaireDelete);
 app.get('/questiontype', questionTypeController.questionTypeGet);
 app.post('/signup', userController.signupPost);
 app.post('/login', userController.loginPost);
