@@ -90,7 +90,7 @@ class Questionnaire extends Component {
                 return (
                     <div key={answer.id} className="form-group">
                         <div className="col-sm-10">
-                            <label htmlFor={answer.id} className="col-xs-11">{answer.title}</label>
+                            <label htmlFor={answer.id} className="col-xs-11 answer-title">{answer.title}</label>
                             <input type="checkbox" name={answer.id} id={answer.id} checked={answer.checked} onChange={(e) => this.handleCheckboxChange(e, question)} className="col-xs-1" />
                         </div>
                     </div>
