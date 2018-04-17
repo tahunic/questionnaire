@@ -80,7 +80,7 @@ class Questionnaire extends Component {
                 return (
                     <div key={answer.id} className="form-group">
                         <div className="col-sm-10">
-                            <label htmlFor={question.id} className="col-xs-11">{answer.title}</label>
+                            <label htmlFor={question.id} className="col-xs-11 answer-title">{answer.title}</label>
                             <input type="radio" name={question.id} id={question.id} value={answer.id} checked={+question.selectedOption === answer.id} onChange={(e) => this.handleOptionChange(e, question)} className="col-xs-1" />
                         </div>
                     </div>
