@@ -4,7 +4,7 @@ class Footer extends Component {
   render() {
     return (
       <footer>
-        <p>© 2018 Questionnaire, Inc. All Rights Reserved.</p>
+        <p>© 2018 MOP Questionnaire, Inc. All Rights Reserved.</p>
       </footer>
     );
   }

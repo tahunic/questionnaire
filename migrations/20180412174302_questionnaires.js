@@ -2,8 +2,10 @@ exports.up = function(knex, Promise) {
     return Promise.all([
       knex.schema.createTable('questionnaires', function(table) {
         table.increments()
-        table.string('question');
-        table.integer('userId').references('users.id');
+        table.string('title');
+        table.text('description');
+        table.integer('userId').references('users.id').onDelete('CASCADE');
+        table.timestamps();        
       })
     ]);
   };
