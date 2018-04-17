@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-- Postgresql database 
+- Postgresql database
 - .env file 
 
 You can create .env file in project root and add this configuration:
@@ -20,7 +20,9 @@ DB_NAME='questionnaire'
 
 TOKEN_SECRET='edbef839113ce19a733dd39986a8db461904c22834e27126e15fcf37d8cf4e39'
 ```
-Make sure to have a database named same as in configuration file.
+Make sure to have a database named same as in configuration file. 
+
+On initial start, use sign up option and then change isAdmin property in database in table users, to gain access to administration.
 
 ### Installation
 
