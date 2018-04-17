@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { fetchQuestionnaire, submitQuestionnaireFillForm } from '../../actions/questionnaire';
 import Messages from '../../components/Messages';
 import { Link } from 'react-router';
+import { smoothScroll } from '../../util/smoothScroll';
 
 const initialState = { questions: [], messages: [], formInvalid: false };
 
@@ -40,7 +41,6 @@ class Questionnaire extends Component {
     }
 
     handleSubmit(event) {
-        console.log(this.state.questions);
         event.preventDefault();
         if (this.validateForm()) {
             this.props.submitQuestionnaireFillForm(this.state.questions, this.props.user.id, this.props.token);
@@ -54,7 +54,6 @@ class Questionnaire extends Component {
     validateForm() {
         var valid = true;
         this.state.questions.map((question) => {
-            console.log(question);
             if (question.questionTypeId === 1 && (question.text === undefined || question.text === ''))
                 valid = false;
             if ((question.questionTypeId === 2 || question.questionTypeId === 3) && question.selectedOption === undefined)
@@ -70,6 +69,7 @@ class Questionnaire extends Component {
                 anyChecked = false;
             }
         });
+        smoothScroll.scrollTo('top');        
         return valid;
     }
 

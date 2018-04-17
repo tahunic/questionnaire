@@ -32,7 +32,6 @@ exports.questionnaireAdminGet = function (req, res) {
   Questionnaire.where({ userId: req.user.id })
     .fetch()
     .then((response) => {
-      console.log("questionnaireAdminGet", response)
       res.send(response);
     })
     .catch(function (err) {
@@ -78,7 +77,6 @@ exports.questionnaireGetByIdAdmin = function (req, res) {
   Questionnaire.where({ id: req.params.id, userId: req.user.id })
     .fetch({ withRelated: ['questions', 'questions.answers', 'questions.answers.answersUsers'] })
     .then((response) => {
-      console.log(response);
       res.send(response);
     })
     .catch(function (err) {
@@ -251,7 +249,6 @@ exports.questionnaireFillPost = function (req, res) {
 
     if (question.questionTypeId === 4) {
       question.answers.map((answer) => {
-        console.log(answer);
 
         if (answer.checked) {
           new AnswerUser({
