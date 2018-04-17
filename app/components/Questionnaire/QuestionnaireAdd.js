@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { submitQuestionnaireAddForm, fetchQuestionTypes } from '../../actions/questionnaire';
+import { submitQuestionnaireAddForm, fetchQuestionTypes, fetchQuestionnaire, submitQuestionnaireEditForm } from '../../actions/questionnaire';
 import Messages from '../../components/Messages';
 import { browserHistory } from 'react-router';
+import { smoothScroll } from '../../util/smoothScroll';
+import Confirm from 'react-confirm-bootstrap';
 
 const initialState = { title: '', description: '', questions: [], types: [], messages: {} };
 
@@ -14,9 +16,17 @@ class QuestionnaireAdd extends Component {
     }
 
     componentWillMount() {
-        if(this.props.user.isAdmin== false)
+        if (this.props.user.isAdmin == false)
             browserHistory.push('/not-found');
-        this.props.fetchQuestionTypes();
+        this.props.fetchQuestionTypes().then(() => {
+            this.setState({ types: this.props.questionTypes })
+        })
+        if (this.props.params.id) {
+            this.props.fetchQuestionnaire(this.props.params.id, this.props.token).then(() => {
+                const q = this.props.questionnaire;
+                this.setState({ title: q.title, description: q.description, questions: q.questions })
+            })
+        }
         this.setState({ messages: this.props.messages });
     }
 
@@ -34,32 +44,42 @@ class QuestionnaireAdd extends Component {
         }
     }
 
+    onConfirmEdit() {
+        if (this.validateForm()) {
+            this.props.submitQuestionnaireEditForm(this.props.params.id, this.state.title, this.state.description, this.state.questions, this.props.token).then(() => {
+                this.setState({ title: initialState.title, description: initialState.description, questions: initialState.questions, messages: this.props.messages });
+            });
+        }
+    }
+
     validateForm() {
         var messages = { error: [] };
-        this.state.title === '' ? messages.error.push({ msg: 'Title cannot be blank' }) : null;
-        this.state.description === '' ? messages.error.push({ msg: 'Description cannot be blank' }) : null;
+        this.state.title === '' ? messages.error.push({ msg: 'Title should not be blank.' }) : null;
+        this.state.description === '' ? messages.error.push({ msg: 'Description should not be blank.' }) : null;
         this.state.questions.length === 0 ? messages.error.push({ msg: 'Please add at least one question.' }) : null;
+        this.state.questions.map((question, index) => question.title === '' ? messages.error.push({ msg: (index + 1) + '. question title should not be blank.' }) : null)
         this.setState({ messages: messages });
+        smoothScroll.scrollTo('top');
         if (messages.error.length === 0)
             return true;
     }
 
     onQuestionAdded() {
         var questions = this.state.questions.slice();
-        questions.push({ id: 'questionTitle' + questions.length, title: '', questionTypeId: 1, answers: [{ id: 'answersTitle0', title: '' }] });
+        questions.push({ id: questions.length, title: '', questionTypeId: 1, answers: [{ id: 0, title: '' }] });
         this.setState({ questions });
     }
 
     onQuestionChange(event) {
         var questions = this.state.questions.slice();
-        questions.find(x => x.id === event.target.id).title = event.target.value;
+        questions.find(x => x.id === +event.target.id).title = event.target.value;
         this.setState({ questions });
     }
 
     // Change question type
     onQuestionTypeChange(event) {
         var questions = this.state.questions.slice();
-        var question = questions.find(x => x.id === event.target.id);
+        var question = questions.find(x => x.id === +event.target.id);
         question.questionTypeId = +event.target.value;
         if (question.questionTypeId === 2)
             this.pushNewTrueFalseAnswers(question);
@@ -69,7 +89,7 @@ class QuestionnaireAdd extends Component {
     // Add answer for question based on index
     onAnswerAdded(i) {
         var questions = this.state.questions[i].answers.slice();
-        questions[i].answers.push({ id: 'answerTitle' + questions[i].answers.length, title: '' });
+        questions[i].answers.push({ id: questions[i].answers.length, title: '' });
         this.setState({ questions });
     }
 
@@ -77,11 +97,12 @@ class QuestionnaireAdd extends Component {
     onAnswerChanged(event, question) {
         var questions = this.state.questions.slice();
         const i = questions.indexOf(questions.find(x => x.id === question.id));
-        questions[i].answers.find(x => x.id === event.target.id).title = event.target.value;
+        questions[i].answers.find(x => x.id === +event.target.id).title = event.target.value;
 
+        // Add or remove rows
         const len = questions[i].answers.length - 1;
         if (questions[i].answers[len].title !== '' && len <= 8)
-            questions[i].answers.push({ id: 'answerTitle' + questions[i].answers.length, title: '' });
+            questions[i].answers.push({ id: questions[i].answers.length, title: '' });
         if (questions[i].answers[len].title === '' && questions[i].answers[len - 1] !== undefined && questions[i].answers[len - 1].title === '')
             questions[i].answers.pop();
 
@@ -96,7 +117,7 @@ class QuestionnaireAdd extends Component {
     // Add answers to state for true/false option
     pushNewTrueFalseAnswers(question) {
         var questions = this.state.questions.slice();
-        questions.find(x => x.id === question.id).answers.push({ id: 'answersTitle1', title: '' });
+        questions.find(x => x.id === question.id).answers.push({ id: 1, title: '' });
         this.setState({ questions });
     }
 
@@ -117,14 +138,14 @@ class QuestionnaireAdd extends Component {
                 <div className="form-group">
                     <label htmlFor="true" className="col-sm-2">Answer 1</label>
                     <div className="col-sm-7 col-sm-offset-1">
-                        <input type="text" name="answersTitle0" id="answersTitle0" value={answer[0].title} onChange={(e) => this.onAnswerChanged(e, question)} className="form-control" />
+                        <input type="text" name={answer[0].id} id={answer[0].id} value={answer[0].title} onChange={(e) => this.onAnswerChanged(e, question)} className="form-control" />
                     </div>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="false" className="col-sm-2">Answer 2</label>
                     <div className="col-sm-7 col-sm-offset-1">
-                        <input type="text" name="answersTitle1" id="answersTitle1" value={answer[1].title} onChange={(e) => this.onAnswerChanged(e, question)} className="form-control" />
+                        <input type="text" name={answer[1].id} id={answer[1].id} value={answer[1].title} onChange={(e) => this.onAnswerChanged(e, question)} className="form-control" />
                     </div>
                 </div>
             </div>
@@ -160,7 +181,7 @@ class QuestionnaireAdd extends Component {
                     <label htmlFor="newQuestion" className="col-sm-2">Question type</label>
                     <div className="col-sm-8">
                         <select name={question.id} id={question.id} className="form-control" value={question.questionTypeId} onChange={(e) => this.onQuestionTypeChange(e)}>
-                            {this.props.questionTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                            {this.state.types.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                         </select>
                     </div>
                 </div>
@@ -207,7 +228,9 @@ class QuestionnaireAdd extends Component {
                             <hr />
                             <div className="form-group">
                                 <div className="col-sm-offset-2 col-sm-8">
-                                    <button type="submit" className="btn btn-success">Save</button>
+                                    {this.props.params.id ? <Confirm onConfirm={() => this.onConfirmEdit()} body="Updating questionnaire will discard all current results. Are you sure?" confirmText="Confirm Edit" title="Edit questionnaire">
+                                        <button type="button" className="btn btn-success">Save</button>
+                                    </Confirm> : <button type="submit" className="btn btn-success">Save</button>}
                                 </div>
                             </div>
                         </form>
@@ -223,8 +246,9 @@ const mapStateToProps = (state) => {
         token: state.auth.token,
         messages: state.messages,
         questionTypes: state.questionnaires.questionTypes,
-        user: state.auth.user
+        user: state.auth.user,
+        questionnaire: state.questionnaires.questionnaire
     };
 };
 
-export default connect(mapStateToProps, { fetchQuestionTypes, submitQuestionnaireAddForm })(QuestionnaireAdd);
+export default connect(mapStateToProps, { fetchQuestionTypes, submitQuestionnaireAddForm, fetchQuestionnaire, submitQuestionnaireEditForm })(QuestionnaireAdd);

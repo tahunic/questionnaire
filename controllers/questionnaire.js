@@ -16,13 +16,6 @@ exports.questionnaireGet = function (req, res) {
   Questionnaire.collection()
     .fetch({ withRelated: ['questionnaireUsers'] })
     .then((response) => {
-      // var questions = [];
-      // response.map((question) => {
-      //   question.relations.questionnaireUsers.map((questionnaireUser) => {
-      //     if (questionnaireUser.userId !== req.user.id)
-      //       questions.push(question);
-      //   });
-      // });
       res.send(response);
     })
     .catch(function (err) {
@@ -108,7 +101,6 @@ exports.questionnairePost = function (req, res) {
     return res.status(400).send(errors);
   }
 
-  console.log("ISADMIN +++ ", req.user.isAdmin);
   if (req.user.isAdmin === false)
     return res.status(500);
 
@@ -154,6 +146,79 @@ exports.questionnairePost = function (req, res) {
 };
 
 /**
+ * Edit questionnaire from admin panel
+ * POST /questionnaire/edit
+ */
+exports.questionnaireEditPost = function (req, res) {
+  req.assert('title', 'Title cannot be blank').notEmpty();
+  req.assert('questions', 'Please add at least one question').notEmpty();
+
+  var errors = req.validationErrors();
+
+  if (errors) {
+    return res.status(400).send(errors);
+  }
+
+  if (req.user.isAdmin === false)
+    return res.status(500);
+
+  // Drop everything and recreate
+  knex('questionnaires')
+    .innerJoin('questions', 'questionnaires.id', 'questions.questionnaireId')
+    .innerJoin('answers', 'answers.questionId', 'questions.id')
+    .innerJoin('answersUsers', 'answer.questionnaireId', 'answersUsers.answerId')
+    .innerJoin('users', 'users.id', 'questionnaires.userId')
+    .where('questionnaires.id', req.body.id)
+    .del()
+    .then(function (result) {
+      new Questionnaire({
+        title: req.body.title,
+        description: req.body.description,
+        userId: req.user.id,
+      }).save()
+        .then(function (response) {
+          req.body.questions.map(question => {
+            new Question({
+              title: question.title,
+              questionTypeId: question.questionTypeId,
+              questionnaireId: response.id
+            }).save()
+              .then(function (response) {
+                question.answers.map(answer => {
+                  new Answer({
+                    title: answer.title,
+                    questionId: response.id,
+                  }).save()
+                    .then(function (response) {
+
+                    })
+                    .catch(function (err) {
+                      console.log(err);
+                      return res.status(500);
+                    });
+                });
+              })
+              .catch(function (err) {
+                console.log(err);
+                return res.status(500);
+              });
+          });
+          res.send({ msg: 'Questionnaire successfully updated.' });
+
+        })
+        .catch(function (err) {
+          console.log(err);
+          return res.status(500);
+        });
+    })
+    .catch(function (err) {
+      console.log(err);
+      return res.status(500);
+    });
+
+};
+
+/**
  * Submit new user filled questionnaire
  * POST /questionnaire/fill
  */
@@ -169,40 +234,21 @@ exports.questionnaireFillPost = function (req, res) {
   const questions = req.body.questions;
   questions.map((question) => {
 
-    // Rethink saving texts in database  
     if (question.questionTypeId === 1) {
       new AnswerUser({
         answerId: question.answers[0].id,
         userId: req.user.id,
         text: question.text
       }).save();
-      //   Question.where({id: +question.selectedOption})
-      //   .fetch({ columns: ['textJson'] })
-      //   .then((response) => {
-      //     Question.where({id: question.id})
-      //   .save({text: question.text}, {patch: true})
-      //   .then((res) => {
-      //     console.log("UPDATE");
-      //   })
-      //   })
     }
 
-    // Check if question type is radio, check if selected and increment total votes
     if (question.questionTypeId === 2 || question.questionTypeId === 3) {
       new AnswerUser({
         answerId: +question.selectedOption,
         userId: req.user.id
       }).save();
-      // Answer.where({ id: +question.selectedOption })
-      //   .fetch({ columns: ['id', 'votes'] })
-      //   .then((response) => {
-      //     const votes = response.attributes.votes + 1;
-      //     Answer.where({ id: +question.selectedOption })
-      //       .save({ votes: votes }, { patch: true })
-      //   })
     }
 
-    // Check if question type is checkbox, check if selected and increment total votes    
     if (question.questionTypeId === 4) {
       question.answers.map((answer) => {
         console.log(answer);
@@ -212,13 +258,6 @@ exports.questionnaireFillPost = function (req, res) {
             answerId: answer.id,
             userId: req.user.id
           }).save();
-          // Answer.where({ id: answer.id })
-          //   .fetch({ columns: ['id', 'votes'] })
-          //   .then((response) => {
-          //     const votes = response.attributes.votes + 1;
-          //     Answer.where({ id: answer.id })
-          //       .save({ votes: votes }, { patch: true })
-          //   })
         }
       })
     }
@@ -238,55 +277,26 @@ exports.questionnaireFillPost = function (req, res) {
 
 };
 
+/**
+ * Delete questionnaire cascade
+ * DELETE /questionnaire/delete
+ */
+
 exports.questionnaireDelete = function (req, res) {
 
   knex('questionnaires')
-  .innerJoin('questions', 'questionnaires.id', 'questions.questionnaireId')
-  .innerJoin('answers', 'answers.questionId', 'questions.id')
-  .innerJoin('answersUsers', 'answer.questionnaireId', 'answersUsers.answerId')
-  .innerJoin('users', 'users.id', 'questionnaires.userId')
-  .where('questionnaires.id', req.params.id)
-  .del()
+    .innerJoin('questions', 'questionnaires.id', 'questions.questionnaireId')
+    .innerJoin('answers', 'answers.questionId', 'questions.id')
+    .innerJoin('answersUsers', 'answer.questionnaireId', 'answersUsers.answerId')
+    .innerJoin('users', 'users.id', 'questionnaires.userId')
+    .where('questionnaires.id', req.params.id)
+    .del()
     .then(function (result) {
-      res.send({msg: 'Questionnaire deleted.' });
+      res.send({ msg: 'Questionnaire deleted.' });
     })
     .catch(function (err) {
       console.log(err);
       return res.status(500);
     });
 
-
-  // new Questionnaire().questions().answers().answersUsers().invokeThen('destroy');
-
-  // Questionnaire.forge({ id: req.params.id })
-  //   .fetch()
-  //   .then(function (item) {
-  //     var relation = item.questions();
-  //     var tableName = relation.relatedData.targetTableName;
-  //     var foreignKey = relation.relatedData.key('questionnaireId');
-
-  //     return Bookshelf.DB.knex(tableName)
-  //       .where(foreignKey, item.id)
-  //       .del()
-  //       .then(function (numRows) {
-  //         console.log(numRows + ' rows have been deleted');
-  //       }).catch(function (err) {
-  //         console.log(err);
-  //       });
-  //   });
-
 };
-
-// /**
-//  * GET /questionnaries
-//  */
-// exports.questionnaireGet = function (req, res) {
-//   Questionnaire.collection().fetch({withRelated: ['questions', 'questions.answers']})
-//     .then((response) => {
-//       res.send(response);
-//     })
-//     .catch(function (err) {
-//       console.log(err);
-//       return res.status(500);
-//     });
-// };

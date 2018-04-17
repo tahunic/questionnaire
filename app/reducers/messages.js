@@ -9,6 +9,7 @@ export default function messages(state = {}, action) {
     case 'QUESTIONNAIRE_DELETE_FAILURE':
     case 'QUESTIONNAIRE_FAILURE':
     case 'QUESTIONNAIRE_ADD_FAILURE':
+    case 'QUESTIONNAIRE_EDIT_FAILURE':
     case 'QUESTIONNAIRE_FILL_FAILURE':
     case 'QUESTIONNAIRE_FILL_FAILURE':
     case 'UNLINK_FAILURE':
@@ -21,6 +22,10 @@ export default function messages(state = {}, action) {
         success: action.messages
       };
     case 'QUESTIONNAIRE_ADD_SUCCESS':
+      return {
+        success: action.messages
+      };
+    case 'QUESTIONNAIRE_EDIT_SUCCESS':
       return {
         success: action.messages
       };

@@ -12,6 +12,8 @@ export default function questionnaire(state = initialState, action) {
             return { questionnaire: action.payload };
         case 'QUESTION_TYPES_SUCCESS':
             return { questionTypes: action.payload };
+        case 'QUESTIONNAIRE_EDIT_SUCCESS':
+            return { messages: action.payload };
         case 'QUESTIONNAIRE_FILL_SUCCESS':
             return { messages: action.payload };
         case 'QUESTIONNAIRE_MANAGE_SUCCESS':

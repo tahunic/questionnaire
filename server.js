@@ -89,6 +89,7 @@ if (app.get('env') === 'development') {
 
 app.post('/contact', userController.ensureAuthenticated, contactController.contactPost);
 app.post('/questionnaire', userController.ensureAuthenticated, questionnaireController.questionnairePost);
+app.post('/questionnaire/edit', userController.ensureAuthenticated, questionnaireController.questionnaireEditPost);
 app.post('/questionnaire/fill', userController.ensureAuthenticated, questionnaireController.questionnaireFillPost);
 app.get('/questionnaire', userController.ensureAuthenticated, questionnaireController.questionnaireGet);
 app.get('/questionnaire/admin', userController.ensureAuthenticated, questionnaireController.questionnaireAdminGet);

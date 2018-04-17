@@ -33,17 +33,15 @@ class Questionnaire extends Component {
         return (votes / totalVotes) * 100;
     }
 
-    onConfirm() {
-        console.log("props", this.props);
+    onConfirmDelete() {
         this.props.deleteQuestionnaire(this.props.params.id, this.props.token).then((res) => {
-            browserHistory.push('/not-found');
+            browserHistory.push('/');
         });
     }
 
     renderAnswers(question) {
         var totalVotes = 0;
         question.answers.map((answer) => totalVotes += answer.answersUsers.length)
-        console.log("total votes", totalVotes);
         return question.answers.map((answer) => {
 
             if (question.questionTypeId === 1)
@@ -123,11 +121,18 @@ class Questionnaire extends Component {
                             <hr />
                             <div className="form-group">
                                 <div className="col-sm-8">
-                                    <Confirm onConfirm={() => this.onConfirm()} body="Are you sure you want to delete questionnaire?" confirmText="Confirm Delete" title="Delete questionnaire">
+                                    <Link to={'/management/' + this.props.questionnaire.id} className="btn btn-primary">Edit questionnaire</Link>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <div className="col-sm-8">
+                                    <Confirm onConfirm={() => this.onConfirmDelete()} body="Are you sure you want to delete questionnaire?" confirmText="Confirm Delete" title="Delete questionnaire">
                                         <button type="button" className="btn btn-danger">Delete questionnaire</button>
                                     </Confirm>
                                 </div>
                             </div>
+                            
                         </form>
                     </div>
                 </div>

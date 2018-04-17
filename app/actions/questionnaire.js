@@ -36,6 +36,43 @@ export function submitQuestionnaireAddForm(title, description, questions, token)
   };
 }
 
+export function submitQuestionnaireEditForm(id, title, description, questions, token) {
+  return (dispatch) => {
+    dispatch({
+      type: 'CLEAR_MESSAGES'
+    });
+    return fetch('/questionnaire/edit', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        id: id,
+        title: title,
+        description: description,
+        questions: questions,
+      })
+    }).then((response) => {
+      if (response.ok) {
+        return response.json().then((json) => {
+          dispatch({
+            type: 'QUESTIONNAIRE_EDIT_SUCCESS',
+            messages: [json]
+          });
+        });
+      } else {
+        return response.json().then((json) => {
+          dispatch({
+            type: 'QUESTIONNAIRE_EDIT_FAILURE',
+            messages: Array.isArray(json) ? json : [json]
+          });
+        });
+      }
+    })
+  };
+}
+
 export function submitQuestionnaireFillForm(questions, userId, token) {
   return (dispatch) => {
     dispatch({

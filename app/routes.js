@@ -41,6 +41,7 @@ export default function getRoutes(store) {
     <Route path="/" component={App}>
       <IndexRoute component={QuestionnaireList} onEnter={loginIfNotAuthenticated} onLeave={clearMessages}/>
       <Route path="/management" component={QuestionnaireAdd} onLeave={clearMessages}/>
+      <Route path="/management/:id" component={QuestionnaireAdd} onLeave={clearMessages}/>
       <Route path="/questionnaires/:id" component={QuestionnaireIndex} onLeave={clearMessages}/>
       <Route path="/questionnaires/:id/manage" component={QuestionnaireManage} onLeave={clearMessages}/>
       <Route path="/contact" component={Contact} onLeave={clearMessages}/>
