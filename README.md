@@ -22,7 +22,15 @@ TOKEN_SECRET='edbef839113ce19a733dd39986a8db461904c22834e27126e15fcf37d8cf4e39'
 ```
 Make sure to have a database named same as in configuration file. 
 
-On initial start, use sign up option and then change isAdmin property in database in table users, to gain access to administration.
+On initial start, use sign up option and then change isAdmin property in database in table users, to gain access to administration. After that, use this script to add question types
+
+```
+INSERT INTO "questionTypes" (name) VALUES
+    ('Text'),
+    ('Yes/No'),
+	('Single choice'),
+    ('Multiple choice');
+```
 
 ### Installation
 
